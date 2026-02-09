@@ -37,7 +37,7 @@ A productivity application for managing tasks and tracking time. Built with Reac
 - Search functionality
 
 ```
-
+```
 ## Getting Started
 
 **What You'll Need**
@@ -258,22 +258,45 @@ Here's a quick way to test all the features:
 
 ## Version Control
 
-Example commit workflow:
-
+## Example Git Workflow
 ```bash
 # Initial setup
 git init
 git add .
 git commit -m "Initial commit: Project setup with NestJS and React"
 
-# Working on features
-git checkout -b feature/task-management
+# Add remote repository
+git remote add origin https://github.com/YOUR-USERNAME/task-tracker.git
+
+# Verify remote was added
+git remote -v
+
+# Push to GitHub
+git branch -M main
+git push -u origin main
+
+# Working on backend features
+git add backend/
+git commit -m "feat: Initialize NestJS backend with TypeScript"
+
+# Bug fixes
 git add .
-git commit -m "feat: Add task CRUD operations"
-git commit -m "feat: Add time tracking functionality"
-git commit -m "feat: Add authentication with JWT"
-git commit -m "feat: Add dashboard with statistics"
-git commit -m "style: Improve UI/UX for task list"
+git commit -m "fix: Resolve timer not stopping correctly"
+
+# Documentation updates
+git add README.md
+git commit -m "docs: Add setup instructions to README"
+
+# Styling improvements
+git add frontend/src/
+git commit -m "style: Improve dashboard UI layout"
+
+# New features
+git add frontend/src/utils/csvExport.ts
+git commit -m "feat: Add CSV export functionality"
+
+# Push changes to GitHub
+git push origin main
 ```
 
 ## Common Issues
@@ -290,16 +313,3 @@ git commit -m "style: Improve UI/UX for task list"
 **CORS Errors**
 - The backend is already set up for `http://localhost:3000`
 - If you're using a different port, update the CORS settings in `backend/src/main.ts`
-
-## Implementation Notes
-
-A few things to keep in mind:
-
-- The backend uses TypeORM's `synchronize: true` option, which automatically creates tables during development. For production, you should disable this and use proper migrations.
-- JWT tokens are valid for 24 hours by default, but you can change this in the config.
-- All passwords are hashed with bcrypt before being stored.
-- Time tracking uses seconds for precision.
-
-## License
-
-MIT
