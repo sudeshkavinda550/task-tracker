@@ -37,7 +37,6 @@ A productivity application for managing tasks and tracking time. Built with Reac
 - Search functionality
 
 ```
-```
 ## Getting Started
 
 **What You'll Need**
