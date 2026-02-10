@@ -36,7 +36,6 @@ A productivity application for managing tasks and tracking time. Built with Reac
 - Task priority levels
 - Search functionality
 
-```
 ## Getting Started
 
 **What You'll Need**
@@ -46,22 +45,44 @@ A productivity application for managing tasks and tracking time. Built with Reac
 
 ### Setting Up the Database
 
-Open your PostgreSQL terminal:
-
-```bash
-psql -U postgres
-```
-
-Create the database:
+Open your PostgreSQL query tool:
 
 ```sql
-CREATE DATABASE task_tracker;
+CREATE TABLE users (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
--- Optional: create a dedicated user
-CREATE USER task_user WITH PASSWORD 'your_password';
-GRANT ALL PRIVILEGES ON DATABASE task_tracker TO task_user;
+CREATE TABLE tasks (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    status VARCHAR(50) DEFAULT 'pending' CHECK (status IN ('pending', 'in_progress', 'completed')),
+    category VARCHAR(100),
+    priority VARCHAR(50) DEFAULT 'medium' CHECK (priority IN ('low', 'medium', 'high')),
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    "createdAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
-\q
+CREATE TABLE time_entries (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    task_id UUID NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
+    "startTime" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "endTime" TIMESTAMP,
+    duration INTEGER DEFAULT 0
+);
+
+CREATE INDEX idx_tasks_user_id ON tasks(user_id);
+CREATE INDEX idx_tasks_status ON tasks(status);
+CREATE INDEX idx_tasks_category ON tasks(category);
+CREATE INDEX idx_tasks_priority ON tasks(priority);
+CREATE INDEX idx_time_entries_task_id ON time_entries(task_id);
+CREATE INDEX idx_users_email ON users(email);
+
 ```
 
 ### Setting Up the Backend
@@ -96,15 +117,13 @@ JWT_EXPIRES_IN=24h
 PORT=3001
 ```
 
-Start the server (this will auto-create the database tables):
+Start the server:
 
 ```bash
 npm start
 ```
 
 The backend will be available at `http://localhost:3001`
-
-Note: For production deployments, you should use proper database migrations instead of auto-synchronization.
 
 ### Setting Up the Frontend
 
@@ -227,33 +246,6 @@ Here's a quick way to test all the features:
 5. Mark some tasks as complete
 6. Check out the dashboard to see your stats
 7. Try out the search and filter options
-
-## Database Structure
-
-**Users**
-- id (UUID, primary key)
-- email (unique)
-- password (hashed)
-- name
-- createdAt
-
-**Tasks**
-- id (UUID, primary key)
-- title
-- description (optional)
-- status ('pending', 'in_progress', or 'completed')
-- category (optional)
-- priority ('low', 'medium', or 'high')
-- userId (links to Users)
-- createdAt
-- updatedAt
-
-**TimeEntries**
-- id (UUID, primary key)
-- taskId (links to Tasks)
-- startTime
-- endTime (null if timer is running)
-- duration (in seconds)
 
 ## Version Control
 
